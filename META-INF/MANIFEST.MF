@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logismo
+Bundle-SymbolicName: net.logismo
+Bundle-Version: 1.0.0
+Bundle-Vendor: David Fogel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: net.markout;resolution:=optional,
+ net.markout.support;resolution:=optional,
+ net.markout.types;resolution:=optional,
+ org.jivesoftware.smack;resolution:=optional,
+ org.jivesoftware.smack.packet;resolution:=optional,
+ org.jivesoftware.smack.util;resolution:=optional,
+ org.slf4j;version="1.5.6",
+ org.slf4j.helpers;version="1.5.6",
+ org.slf4j.spi;version="1.5.6",
+ us.fogel.events
+Export-Package: net.logismo,
+ net.logismo.events,
+ net.logismo.matchers,
+ net.logismo.text,
+ net.logismo.xml,
+ net.logismo.xmpp,
+ org.slf4j.impl;version="1.5.6"

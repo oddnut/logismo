@@ -1,0 +1,161 @@
+/*
+	GroupChatPublisher.java
+
+	Author: David Fogel
+
+	Copyright 2006 25oz Software, Inc.
+
+	All rights reserved. 
+ */
+
+package net.logismo.xmpp;
+
+import net.logismo.*;
+import net.logismo.text.*;
+import net.logismo.text.Formatter;
+
+import org.jivesoftware.smack.*;
+import java.io.*;
+import java.util.*;
+
+/**
+ * GroupChatPublisher
+ *
+ * Comment here.  Author: David Fogel
+ */
+public class GroupChatPublisher extends XMPPPublisher {
+	// *** Class Members ***
+
+	// *** Instance Members ***
+	
+	private String theRoomAddress;
+	private Formatter theFormatter;
+	private GroupChat theGroupChat;
+
+	// *** Constructors ***
+	
+	public GroupChatPublisher(	String xmppAddress,
+							String xmppPassword,
+							String roomAddress,
+							Formatter formatter) {
+		
+		this(xmppAddress, new StandardXMPPConnectionFactory(xmppAddress, xmppPassword), roomAddress, formatter);
+	}
+	
+	public GroupChatPublisher(	String publisherName,
+							XMPPConnectionFactory factory,
+							String roomAddress,
+							Formatter formatter) {
+		
+		super(publisherName, factory);
+		
+		theRoomAddress = roomAddress;
+		theFormatter = formatter;
+		theGroupChat = null;
+	}
+
+	// *** XMPPPublisher Methods ***
+	
+	protected void handleNewXMPPConnection(XMPPConnection connection) throws PublisherException {
+		
+		theGroupChat = connection.createGroupChat(theRoomAddress);
+		
+		try {
+			
+			theGroupChat.join(getName());
+			
+		} catch (XMPPException xe) {
+			throw new PublisherException("Couldn't join Group Chat " + theRoomAddress + " as nickname " + getName(), xe);
+		}
+	}
+	
+	// *** Publisher Methods ***
+	
+	public void publish(LogEvent e) throws PublisherException {
+		throw new UnsupportedOperationException("Must use publish(List logEvents) instead!");
+	}
+	
+	public void publish(List logEvents) throws PublisherException {
+		
+		ensureXMPPConnection(); // make sure everything is connected
+		
+		if ( ! theGroupChat.isJoined()) {
+			try {
+				theGroupChat.join(getName());
+			} catch (XMPPException xe) {
+				throw new PublisherException("Couldn't join Group Chat " + theRoomAddress + " as nickname " + getName(), xe);
+			}
+		}
+		
+		// looks like the count might not be accurate at this point, so, oh well.
+		//if (theGroupChat.getParticipantCount() < 1) // preumably the participant count includes self
+		//	return;
+		
+		try {
+		
+			CharArrayWriter out = new CharArrayWriter();
+			int size = logEvents.size();
+			for (int i = 0 ; i < size ; i++) {
+				
+				LogEvent e = (LogEvent) logEvents.get(i);
+				// since events that have stacktraces are long, we send them as separate messages
+				// otherwise, we append log events into a single message
+				if (e.getThrowable() != null) {
+					// send whatever's already there:
+					if (out.size() > 0) {
+						theGroupChat.sendMessage(out.toString());
+						out.reset();
+					}
+					// format and send the log event with throwable
+					theFormatter.format(e, out);
+					theGroupChat.sendMessage(out.toString());
+					out.reset();
+					
+				} else {
+					if (out.size() > 0)
+						out.write('\n'); // separate entries with a newline
+					theFormatter.format(e, out);
+				}
+			}
+			
+			if (out.size() > 0) {
+				theGroupChat.sendMessage(out.toString());
+				out.reset();
+			}
+		} catch (XMPPException xe) {
+			throw new PublisherException("Couldn't send messages to group chat", xe);
+		} catch (IOException ioe) {
+			// actually, since we're using a ArrayWriter, this shouldn't ever happen, but
+			throw new PublisherException(ioe);
+		}
+	}
+
+	// *** Public Methods ***
+	
+	public Formatter getFormatter() {
+		return theFormatter;
+	}
+	
+	public GroupChat getCurrentGroupChat() {
+		return theGroupChat;
+	}
+
+	// *** Protected Methods ***
+
+	// *** Package Methods ***
+
+	// *** Private Methods ***
+
+	// *** Private Classes ***
+}
+
+
+
+
+
+
+
+
+
+
+/* end */
