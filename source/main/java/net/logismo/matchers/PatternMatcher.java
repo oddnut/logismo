@@ -28,6 +28,10 @@ public class PatternMatcher implements NameMatcher {
 
 	// *** Constructors ***
 	
+	public PatternMatcher(String pattern) {
+		thePattern = Pattern.compile(pattern);
+	}
+	
 	public PatternMatcher(Pattern pattern) {
 		thePattern = pattern;
 	}

@@ -13,7 +13,10 @@ package net.logismo;
 import net.logismo.events.*;
 
 import org.slf4j.*;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import us.fogel.events.*;
+
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,6 +61,8 @@ public class LogSystem implements ILoggerFactory{
 		theEvents = new StandardEventSource();
 		
 		theService = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE);
+		
+		SLF4JBridgeHandler.install();
 	}
 
 	// *** ILoggerFactory Methods ***

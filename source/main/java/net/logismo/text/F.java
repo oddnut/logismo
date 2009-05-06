@@ -24,7 +24,7 @@ import net.logismo.LogEvent;
 public class F {
 	// *** Class Members ***
 	
-	public static Formatter layout(Object[] items) {
+	public static Formatter layout(Object... items) {
 		return new LayoutF(items);
 	}
 	
@@ -78,7 +78,7 @@ public class F {
 	
 	private static class LayoutF implements Formatter {
 		private Object[] theItems;
-		LayoutF(Object[] items) {
+		LayoutF(Object... items) {
 			theItems = items;
 		}
 		public void format(LogEvent e, Writer out) throws IOException {

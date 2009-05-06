@@ -26,8 +26,6 @@ public abstract class Publisher {
 	private static final int RESET_QUEUE_SIZE = 1000;
 	
 	private static final long DEFAULT_SERVICE_DELAY_MS = 300;
-	
-	private static final Log LOG = LogSystem.getLogSystem().getLog(Publisher.class.getName());
 
 	// *** Instance Members ***
 	
@@ -152,7 +150,7 @@ public abstract class Publisher {
 					activate();
 					
 				} catch (PublisherException pe) {
-					LOG.error("Couldn't activate publisher: " + theName, pe);
+					getLog().error("Couldn't activate publisher: " + theName, pe);
 					setEnabled(false);
 					return;
 				}
@@ -176,11 +174,11 @@ public abstract class Publisher {
 				
 			} catch (PublisherException pe) { 
 				//TODO UNFINISHED: Careful, we don't want to start an endless recursion of log messages...
-				LOG.error("PublisherException occurred during publishing for Publisher named " + theName, pe);
+				getLog().error("PublisherException occurred during publishing for Publisher named " + theName, pe);
 				
 			} catch (RuntimeException re) {
 				// TODO UNFINISHED: Careful, we don't want to start an endless recursion of log messages...
-				LOG.error("RuntimeException occurred during publishing for Publisher named " + theName, re);
+				getLog().error("RuntimeException occurred during publishing for Publisher named " + theName, re);
 				
 			} finally {
 				
@@ -223,7 +221,7 @@ public abstract class Publisher {
 				deactivate();
 			}
 		} catch (PublisherException pe) {
-			LOG.error("Error deactivating publisher: " + theName, pe);
+			getLog().error("Error deactivating publisher: " + theName, pe);
 		}
 	}
 
@@ -231,6 +229,10 @@ public abstract class Publisher {
 	
 	private Object getLock() {
 		return theSystem != null ? theSystem.getChangeLock() : this;
+	}
+	
+	private Log getLog() {
+		return LogSystem.getLogSystem().getLog(Publisher.class.getName());
 	}
 
 	// *** Private Classes ***
