@@ -3,7 +3,7 @@
 
 	Author: David Fogel
 
-	Copyright 2005 25oz Software, Inc.
+	Copyright 2005-2009
 
 	All rights reserved. 
  */
