@@ -133,16 +133,27 @@ public class F {
 	private static class ThrowableF implements Formatter {
 		public void format(LogEvent e, Writer out) throws IOException {
 			Throwable t = e.getThrowable();
-			if (t != null) {
+			boolean first = true;
+			while (t != null) {
 				out.write('\n');
+				if (first)
+					first = false;
+				else
+					out.write("\nCaused by:\n");
+				out.write(t.getClass().getCanonicalName());
 				String m = t.getMessage();
 				if (m != null)
-					out.write(t.getMessage());
+					out.append(": ").append(t.getMessage());
 				StackTraceElement[] stl = t.getStackTrace();
 				for (int i = 0 ; i < stl.length ; i++) {
 					out.write("\n\t");
 					out.write(stl[i].toString());
 				}
+				
+				if (t == t.getCause()) // not sure why this happens some time, but whatever
+					t = null;
+				else
+					t = t.getCause();
 			}
 		}
 	}
