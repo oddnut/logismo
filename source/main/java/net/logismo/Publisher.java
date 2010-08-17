@@ -182,10 +182,10 @@ public abstract class Publisher {
 				
 			} finally {
 				
-				queue.clear();
-				
 				if (queue.size() >= RESET_QUEUE_SIZE)
 					queue = new ArrayList<LogEvent>(INITIAL_QUEUE_SIZE);
+				else
+					queue.clear();
 				
 				theSpareQueue = queue;
 			}

@@ -258,6 +258,7 @@ public class Log extends MarkerIgnoringBase implements Logger {
 			ResourceBundle rb = translators[i].getResourceBundle();
 			try {
 				translated = rb.getString(rawMessage);
+				break; // presumably we have a translation now
 			} catch (MissingResourceException mre) {}
 		}
 		if (translated == null)
