@@ -1,0 +1,30 @@
+apply from: "../oddnut/repositories.gradle"
+apply from: "../oddnut/osgi.gradle"
+
+version = "1.0.0"
+
+dependencies {
+	compile ":slf4j-api:1.5.11",
+			":com.springsource.org.jivesoftware.smack:3.1.0",
+			":net.markout:1.0.0",
+			":us.fogel.events:1.0.0"
+}
+
+jar {
+	manifest {
+		setName			"Logismo"
+		symbolicName =	"net.logismo"
+		vendor =		"David Fogel"
+		description =	"Logging library"
+		version =		project.version
+		
+		instruction "Export-Package", 
+					"net.logismo.*;version=" + project.version, 
+					"org.slf4j.*;version=1.5.11"
+		
+		instruction "Import-Package", 
+					"net.markout.*;resolution:=optional",
+					"org.jivesoftware.smack.*;resolution:=optional",
+					"*"
+	}
+}
